@@ -338,6 +338,14 @@ dotenv2.config();
 var __dirname = path.dirname(fileURLToPath(import.meta.url));
 var app = express();
 app.use(express.json());
+app.get("/api/health", (_req, res) => {
+  res.json({
+    success: true,
+    service: "CREOVA Backend",
+    status: "operational",
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  });
+});
 app.get("/api/news", async (req, res) => {
   const queries = {
     "AI & Technology": "artificial intelligence technology",

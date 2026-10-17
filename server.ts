@@ -24,6 +24,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.use(express.json());
 
+app.get("/api/health", (_req, res) => {
+  res.json({
+    success: true,
+    service: "CREOVA Backend",
+    status: "operational",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.get("/api/news", async (req, res) => {
   const queries: Record<string, string> = {
     "AI & Technology": "artificial intelligence technology",
