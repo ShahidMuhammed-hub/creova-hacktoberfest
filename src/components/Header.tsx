@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { ViewMode } from '../types';
-import { Search, Bell, Plus, ChevronDown, Sparkles, X, CheckCircle2, LogOut, User } from 'lucide-react';
+import { Search, Bell, Plus, ChevronDown, Sparkles, X, LogOut, Menu } from 'lucide-react';
 
 interface HeaderProps {
   currentView: ViewMode;
+  onOpenMobileMenu?: () => void;
   onOpenCreateModal: () => void;
   onOpenAIAgent: () => void;
   currentUser?: { name: string; email: string; avatar: string };
@@ -13,6 +14,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ 
   currentView, 
+  onOpenMobileMenu,
   onOpenCreateModal, 
   onOpenAIAgent, 
   currentUser, 
@@ -51,10 +53,11 @@ export const Header: React.FC<HeaderProps> = ({
   ];
 
   return (
-    <header className="h-18 bg-[#EDEEE5]/80 backdrop-blur-md border-b border-[#DEDFD8] px-6 flex items-center justify-between sticky top-0 z-20">
+    <header className="h-16 md:h-18 bg-[#EDEEE5]/90 backdrop-blur-md border-b border-[#DEDFD8] px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 sticky top-0 z-20 min-w-0">
       {/* Left: View title */}
-      <div className="flex items-center gap-4">
-        <h1 className="text-xl font-bold text-[#111111] tracking-tight">{getViewTitle(currentView)}</h1>
+      <div className="flex items-center gap-2 md:gap-4 min-w-0 flex-1">
+        <button type="button" className="md:hidden shrink-0 w-10 h-10 rounded-xl bg-white border border-[#DEDFD8] flex items-center justify-center" onClick={onOpenMobileMenu} aria-label="Open navigation"><Menu size={20}/></button>
+        <h1 className="text-sm sm:text-base lg:text-xl font-bold text-[#111111] tracking-tight truncate">{getViewTitle(currentView)}</h1>
         <div className="hidden md:flex items-center gap-1.5 px-3 py-1 bg-white border border-[#DEDFD8] rounded-full text-xs font-medium text-[#555555]">
           <span>Workspace:</span>
           <span className="font-semibold text-[#111111]">CREOVA Global HQ</span>
@@ -63,9 +66,9 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Right: Search, AI Agent, Create, Notifications, Profile Avatar Dropdown */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 shrink-0">
         {/* Global Search */}
-        <div className="hidden sm:flex items-center gap-2 bg-white border border-[#DEDFD8] rounded-xl px-3 py-1.5 w-56 lg:w-72 focus-within:ring-2 focus-within:ring-[#C8F34A] focus-within:border-[#111111] transition-all">
+        <div className="hidden xl:flex items-center gap-2 bg-white border border-[#DEDFD8] rounded-xl px-3 py-1.5 w-56 lg:w-72 focus-within:ring-2 focus-within:ring-[#C8F34A] focus-within:border-[#111111] transition-all">
           <Search className="w-4 h-4 text-[#888888]" />
           <input
             type="text"
@@ -79,16 +82,18 @@ export const Header: React.FC<HeaderProps> = ({
         {/* AI Agent Button */}
         <button
           onClick={onOpenAIAgent}
-          className="flex items-center gap-2 bg-[#C8F34A] hover:bg-[#B8E63A] text-[#050505] px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition-all cursor-pointer"
+          aria-label="Open AI Agent"
+          className="flex items-center justify-center gap-2 bg-[#C8F34A] hover:bg-[#B8E63A] text-[#050505] px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition-all cursor-pointer"
         >
           <Sparkles className="w-4 h-4" />
-          <span className="hidden sm:inline">AI Agent</span>
+          <span className="hidden lg:inline">AI Agent</span>
         </button>
 
         {/* Create Content Button */}
         <button
           onClick={onOpenCreateModal}
-          className="flex items-center gap-2 bg-[#050505] hover:bg-[#222222] text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-sm transition-all cursor-pointer"
+          aria-label="Create content"
+          className="hidden sm:flex items-center gap-2 bg-[#050505] hover:bg-[#222222] text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-sm transition-all cursor-pointer"
         >
           <Plus className="w-4 h-4 text-[#C8F34A]" />
           <span className="hidden sm:inline">Create Content</span>
@@ -98,7 +103,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="w-10 h-10 rounded-xl bg-white border border-[#DEDFD8] flex items-center justify-center text-[#111111] hover:border-[#111111] transition-all relative cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-xl bg-white border border-[#DEDFD8] flex items-center justify-center text-[#111111] hover:border-[#111111] transition-all relative cursor-pointer"
             title="Notifications"
           >
             <Bell className="w-4 h-4" />
@@ -106,7 +111,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 bg-white border border-[#DEDFD8] rounded-2xl shadow-xl p-4 z-50">
+            <div className="absolute right-0 mt-2 w-[min(85vw,320px)] bg-white border border-[#DEDFD8] rounded-2xl shadow-xl p-4 z-50">
               <div className="flex items-center justify-between pb-3 border-b border-[#EEEEEA]">
                 <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider">Notifications</h3>
                 <button onClick={() => setShowNotifications(false)} className="text-[#888888] hover:text-[#111111]">
@@ -132,7 +137,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="relative">
           <button
             onClick={() => setShowProfileMenu(!showProfileMenu)}
-            className="w-10 h-10 rounded-xl bg-white border border-[#DEDFD8] flex items-center justify-center overflow-hidden cursor-pointer shadow-sm hover:border-[#111111] transition-all"
+            className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-xl bg-white border border-[#DEDFD8] flex items-center justify-center overflow-hidden cursor-pointer shadow-sm hover:border-[#111111] transition-all"
             title={currentUser?.name || "Profile Menu"}
           >
             <img 
@@ -148,7 +153,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <img 
                   src={currentUser?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces"} 
                   alt={currentUser?.name || "Alex"}
-                  className="w-10 h-10 rounded-xl object-cover" 
+                  className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-xl object-cover" 
                 />
                 <div className="overflow-hidden">
                   <p className="text-xs font-bold text-[#111111] truncate">{currentUser?.name || 'Alex Morgan'}</p>

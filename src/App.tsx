@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { House, Sparkles, FolderKanban, Menu, X } from 'lucide-react';
 import { ViewMode, Project, ContentIdea, ScriptItem, SceneItem, TaskItem, CalendarEvent } from './types';
 import { 
   initialProjects, 
@@ -47,6 +48,18 @@ export default function App() {
   const [calendarEvents] = useState<CalendarEvent[]>(initialCalendarEvents);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isAIAgentOpen, setIsAIAgentOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const handleNavigate = (view: ViewMode) => {
+    setCurrentView(view);
+    setIsMobileMenuOpen(false);
+  };
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const onEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setIsMobileMenuOpen(false); };
+    document.addEventListener('keydown', onEscape);
+    return () => document.removeEventListener('keydown', onEscape);
+  }, [isMobileMenuOpen]);
 
   // Fetch initial data from backend API v1 on mount
   useEffect(() => {
@@ -161,20 +174,44 @@ export default function App() {
   }
 
   return (
-    <div className="flex min-h-screen bg-grid-pattern">
-      <Sidebar currentView={currentView} onSelectView={setCurrentView} />
-      <div className="flex-1 flex flex-col min-w-0">
+    <div className="flex min-h-dvh min-w-0 bg-grid-pattern">
+      <div className="hidden md:block shrink-0"><Sidebar currentView={currentView} onSelectView={handleNavigate} /></div>
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden" role="presentation">
+          <button type="button" aria-label="Close navigation" className="absolute inset-0 bg-black/60" onClick={() => setIsMobileMenuOpen(false)} />
+          <div className="absolute inset-y-0 left-0 w-[min(85vw,320px)] shadow-2xl" role="dialog" aria-modal="true" aria-label="CREOVA navigation">
+            <Sidebar currentView={currentView} onSelectView={handleNavigate} isMobile />
+            <button type="button" className="absolute right-3 top-5 rounded-lg p-2 text-white bg-white/10" aria-label="Close menu" onClick={() => setIsMobileMenuOpen(false)}><X size={20}/></button>
+          </div>
+        </div>
+      )}
+      <div className="flex-1 flex flex-col min-w-0 w-full">
         <Header 
           currentView={currentView} 
+          onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
           onOpenCreateModal={() => setIsCreateModalOpen(true)} 
           onOpenAIAgent={() => setIsAIAgentOpen(true)}
           currentUser={currentUser}
           onLogout={() => setIsAuthenticated(false)}
-          onNavigate={setCurrentView}
+          onNavigate={handleNavigate}
         />
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 min-w-0 overflow-x-hidden overflow-y-auto pb-20 md:pb-0 creova-mobile-main">
           {renderCurrentView()}
         </main>
+        <nav aria-label="Mobile navigation" className="fixed bottom-0 inset-x-0 z-40 border-t border-white/10 bg-[#080808] text-white md:hidden" style={{paddingBottom: 'env(safe-area-inset-bottom)'}}>
+          <div className="grid grid-cols-4 h-16">
+            {[
+              { label: 'Home', icon: House, action: () => handleNavigate('dashboard'), active: currentView === 'dashboard' },
+              { label: 'AI Agent', icon: Sparkles, action: () => setIsAIAgentOpen(true), active: isAIAgentOpen },
+              { label: 'Projects', icon: FolderKanban, action: () => handleNavigate('projects'), active: currentView === 'projects' },
+              { label: 'Menu', icon: Menu, action: () => setIsMobileMenuOpen(true), active: isMobileMenuOpen },
+            ].map(item => { const Icon = item.icon; return (
+              <button key={item.label} type="button" onClick={item.action} aria-label={item.label} className={`flex flex-col items-center justify-center gap-1 text-[11px] font-medium ${item.active ? 'text-[#C8F34A]' : 'text-[#b8b8b8]'}`}>
+                <Icon size={21}/><span>{item.label}</span>
+              </button>
+            ); })}
+          </div>
+        </nav>
       </div>
 
       <CreateContentModal

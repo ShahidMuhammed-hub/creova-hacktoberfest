@@ -31,3 +31,14 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #B8E63A;
 }
+
+/* Mobile application shell: individual studio layouts may need further responsive tuning. */
+html, body, #root { min-width: 0; min-height: 100%; }
+body { overflow-x: hidden; }
+@media (max-width: 767px) {
+  .creova-mobile-main { width: 100%; }
+  .creova-mobile-main > * { min-width: 0; max-width: 100%; }
+  .creova-mobile-main img, .creova-mobile-main video { max-width: 100%; }
+  .creova-mobile-main input, .creova-mobile-main textarea { min-width: 0; }
+  .creova-mobile-main table { display: block; overflow-x: auto; max-width: 100%; }
+}

@@ -21,9 +21,10 @@ import {
 interface SidebarProps {
   currentView: ViewMode;
   onSelectView: (view: ViewMode) => void;
+  isMobile?: boolean;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ currentView, onSelectView }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ currentView, onSelectView, isMobile = false }) => {
   const navItems = [
     { id: 'dashboard' as ViewMode, label: 'Overview', icon: LayoutDashboard },
     { id: 'discover' as ViewMode, label: 'Discover', icon: Compass },
@@ -46,13 +47,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onSelectView }) =
   ];
 
   return (
-    <aside className="w-20 lg:w-64 bg-[#050505] text-[#A3A3A3] flex flex-col h-screen sticky top-0 border-r border-[#1F1F1F] z-30 select-none transition-all duration-200">
+    <aside className={`${isMobile ? "w-full" : "w-20 lg:w-64"} bg-[#050505] text-[#A3A3A3] flex flex-col h-dvh sticky top-0 border-r border-[#1F1F1F] z-30 select-none transition-all duration-200`}>
       {/* Brand logo & symbol */}
       <div className="p-5 flex items-center gap-3 border-b border-[#1F1F1F]">
         <div className="w-9 h-9 rounded-full border-2 border-[#C8F34A] flex items-center justify-center bg-black shadow-[0_0_12px_rgba(200,243,74,0.3)]">
           <div className="w-3.5 h-3.5 rounded-full bg-[#C8F34A] animate-pulse" />
         </div>
-        <div className="hidden lg:block">
+        <div className={isMobile ? "block" : "hidden lg:block"}>
           <span className="font-bold text-white tracking-wider text-lg">CREOVA</span>
           <span className="block text-[10px] text-[#888888] font-medium tracking-widest uppercase">Creator OS</span>
         </div>
@@ -60,7 +61,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onSelectView }) =
 
       {/* Main Nav */}
       <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1 custom-scrollbar">
-        <div className="hidden lg:block px-3 pb-2 text-[11px] font-semibold text-[#666666] uppercase tracking-wider">
+        <div className={isMobile ? "block px-3 pb-2 text-[11px] font-semibold text-[#666666] uppercase tracking-wider" : "hidden lg:block px-3 pb-2 text-[11px] font-semibold text-[#666666] uppercase tracking-wider"}>
           Workspace
         </div>
         {navItems.map((item) => {
@@ -78,7 +79,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onSelectView }) =
               }`}
             >
               <Icon className={`w-5 h-5 shrink-0 transition-colors ${isActive ? 'text-[#C8F34A]' : 'text-[#888888] group-hover:text-white'}`} />
-              <span className="hidden lg:block truncate">{item.label}</span>
+              <span className={isMobile ? "block truncate" : "hidden lg:block truncate"}>{item.label}</span>
               {isActive && (
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-[#C8F34A] rounded-l-full hidden lg:block" />
               )}
@@ -86,7 +87,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onSelectView }) =
           );
         })}
 
-        <div className="pt-6 hidden lg:block px-3 pb-2 text-[11px] font-semibold text-[#666666] uppercase tracking-wider">
+        <div className={`pt-6 ${isMobile ? "block" : "hidden lg:block"} px-3 pb-2 text-[11px] font-semibold text-[#666666] uppercase tracking-wider`}>
           System
         </div>
         <div className="space-y-1">
@@ -105,7 +106,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onSelectView }) =
                 }`}
               >
                 <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-[#C8F34A]' : 'text-[#888888] group-hover:text-white'}`} />
-                <span className="hidden lg:block truncate">{item.label}</span>
+                <span className={isMobile ? "block truncate" : "hidden lg:block truncate"}>{item.label}</span>
               </button>
             );
           })}
